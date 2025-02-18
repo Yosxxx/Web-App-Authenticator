@@ -1,5 +1,12 @@
+import { BrowserRouter } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+
 function App() {
-  return <h1>Welcome</h1>;
+  return (
+    <BrowserRouter>
+      <LandingPage />
+    </BrowserRouter>
+  );
 }
 
 export default App;

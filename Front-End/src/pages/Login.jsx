@@ -36,7 +36,7 @@ function Login({ setIsAuthenticated }) {
               placeholder="Email Address..."
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full pt-[0.2vh] pb-[0.2vh] mb-3 text-[#BBC1CF]/58 border-b-[1px] border-[#BBC1CF]/50"
+              className="w-full pt-[0.2vh] pb-[0.5vh] mb-3 text-[#BBC1CF]/58 border-b-[1px] border-[#BBC1CF]/50 focus:outline-none focus:text-[#95A8C9]"
             />
           </div>
           <div>
@@ -46,7 +46,7 @@ function Login({ setIsAuthenticated }) {
               placeholder="*********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pt-[0.2vh] pb-[0.2vh] mb-3 text-[#BBC1CF]/58 border-b-[1px] border-[#BBC1CF]/50"
+              className="w-full pt-[0.2vh] pb-[0.5vh] mb-3 text-[#BBC1CF]/58 border-b-[1px] border-[#BBC1CF]/50 focus:outline-none focus:text-[#95A8C9]"
             />
           </div>
           <button

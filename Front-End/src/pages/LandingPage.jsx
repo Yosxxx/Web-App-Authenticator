@@ -8,15 +8,17 @@ import ContributionStatement from "../components/ContributionStatement";
 function LandingPage() {
   return (
     <>
-      <ProfileComponent />
+      <div style={{ backgroundColor: "#191F25" }} className="min-h-screen">
+        <ProfileComponent />
 
-      <Navbar />
+        <Navbar />
 
-      <Routes>
-        <Route path="/built-with" element={<BuiltWith />} />
-        <Route path="/our-ai" element={<OurAI />} />
-        <Route path="/contribution" element={<ContributionStatement />} />
-      </Routes>
+        <Routes>
+          <Route path="/built-with" element={<BuiltWith />} />
+          <Route path="/our-ai" element={<OurAI />} />
+          <Route path="/contribution" element={<ContributionStatement />} />
+        </Routes>
+      </div>
     </>
   );
 }

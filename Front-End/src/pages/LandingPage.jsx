@@ -4,6 +4,7 @@ import ProfileComponent from "../components/ProfileComponent";
 import BuiltWith from "../components/BuiltWith";
 import OurAI from "../components/OurAI";
 import ContributionStatement from "../components/ContributionStatement";
+import Card from "../components/Card";
 
 function LandingPage() {
   return (

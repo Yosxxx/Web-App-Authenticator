@@ -1,5 +1,11 @@
+import Content from "./Content";
+
 function OurAI() {
-  return <h1>Our AI</h1>;
+  return (
+    <div>
+      <h1>NOT YET</h1>
+    </div>
+  );
 }
 
 export default OurAI;

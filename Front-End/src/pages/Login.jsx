@@ -1,19 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BackgroundDot from "../components/BackgroundDot";
 import { Icon } from "@iconify/react";
 
 function Login({ setIsAuthenticated }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSignUpClick = () => {
-    navigate("/signup"); // Navigate directly, animation is handled by Transition
+    navigate("/signup");
   };
 
   const handleLogin = () => {
-    // Dummy login
     setIsAuthenticated(true);
     navigate("/");
   };
@@ -34,8 +30,6 @@ function Login({ setIsAuthenticated }) {
             <input
               type="text"
               placeholder="Email Address..."
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
               className="w-full pt-[0.2vh] pb-[0.5vh] mb-3 text-[#BBC1CF] border-b-[1px] border-[#BBC1CF]/50 placeholder-[#BBC1CF]/58 focus:outline-none focus:text-[#BBC1CF]"
             />
           </div>
@@ -44,14 +38,12 @@ function Login({ setIsAuthenticated }) {
             <input
               type="password"
               placeholder="*********"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               className="w-full pt-[0.2vh] pb-[0.5vh] mb-3 text-[#BBC1CF] border-b-[1px] border-[#BBC1CF]/50 placeholder-[#BBC1CF]/58 focus:outline-none focus:text-[#BBC1CF]"
             />
           </div>
           <button
             onClick={handleLogin}
-            className="w-full bg-[#6366F1] hover:bg-[#5254C7] border-1 border-[#BBC1CF] text-white font-bold py-2 rounded-xl transition"
+            className="w-full bg-[#6366F1] hover:bg-[#5254C7] border-1 border-[#BBC1CF] text-white font-bold py-2 rounded-xl transition cursor-pointer"
           >
             Continue
           </button>
@@ -65,7 +57,7 @@ function Login({ setIsAuthenticated }) {
               <span className="flex-grow h-[1px] bg-[#BBC1CF]/40"></span>
             </div>
             <button className="mt-2 p-3">
-              <Icon icon="mdi:face-recognition" className="w-[10vh] h-[10vh] text-[#BBC1CF]" />
+              <Icon icon="mdi:face-recognition" className="w-[10vh] h-[10vh] text-[#BBC1CF] cursor-pointer" />
             </button>
           </div>
         </div>

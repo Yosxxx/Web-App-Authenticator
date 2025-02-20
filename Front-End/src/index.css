@@ -1,10 +1,41 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400;500;600;700&family=Roboto:wght@100;300;400;500;700;900&display=swap");
 
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Menlo";
+  src: url("../src/assets/fonts/Menlo-Regular.ttf");
+}
+
 @theme {
-  --font-primary: "Roboto Mono", serif;
-  --font-secondary: "Roboto", serif;
+  /* Font Families */
+  --font-primary: "Roboto Mono", "Menlo", Courier, monospace;
+  --font-secondary: "Roboto", "Menlo", Courier, monospace;
+
+  /* Background Colors */
+  --color-bgPrimary: #1a2026; /* main body color */
+  --color-bgSecondary: #1d252c; /* secondary body color */
+
+  /* Font Colors */
+  --color-primary: #bbc1cf;
+  --color-secondary: #a8a6ac;
+  --color-bluish: #33ced8;
+  --color-orange: #f0be72;
+  --color-greenish: #00684a;
+  --color-darkbluish: #7790b6;
+  --color-brownish: #bcaba2;
+
+  /* Navbar Colors */
+  --color-customHover: #b8bfce;
+  --color-customNormalHover: #565c6c;
+}
+
+/* NOT GOOD PRACTICE, ONLY ONE TIME USE FOR GRADIENT TEXT */
+.text-primary-gradient {
+  background: linear-gradient(#bbc1cf, #95a8c9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 * {

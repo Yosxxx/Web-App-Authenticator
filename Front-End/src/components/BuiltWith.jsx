@@ -196,6 +196,7 @@ function BuiltWith() {
         <Lottie
           animationData={SupabaseLogo}
           style={{ width: "100%", height: "100%" }}
+          className="lg:mr-20"
         ></Lottie>
       </div>
     </div>

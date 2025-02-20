@@ -8,20 +8,20 @@ function Login({ setIsAuthenticated }) {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  const handleSignUpClick = () => {
+    navigate("/signup"); // Navigate directly, animation is handled by Transition
+  };
+
   const handleLogin = () => {
-    if (username === "admin" && password === "password") {
-      setIsAuthenticated(true);
-      navigate("/");
-    } else {
-      alert("Invalid credentials");
-    }
+    // Dummy login
+    setIsAuthenticated(true);
+    navigate("/");
   };
 
   return (
     <div className="relative w-screen h-screen flex items-center justify-center">
-      <BackgroundDot />
 
-      <div className="w-[28vw] h-[78vh] absolute z-10 bg-[#2E313C]/80 p-[2vw] pr-[4vw] pl-[4vw] rounded-[50px] flex flex-col justify-center items-center gap-[2vh]">
+      <div className="w-[28vw] h-[78vh] absolute z-20 bg-[#2E313C]/80 p-[2vw] pr-[4vw] pl-[4vw] rounded-[50px] flex flex-col justify-center items-center gap-[2vh]">
         <div className="flex flex-col justify-center items-center">
           <h1 className="text-4xl font-bold tracking-[15px] bg-gradient-to-r from-[#BBC1CF] to-[#95A8C9] text-transparent bg-clip-text">F4</h1>
           <h1 className="text-4xl font-bold tracking-[15px] bg-gradient-to-r from-[#BBC1CF] to-[#95A8C9] text-transparent bg-clip-text">C3</h1>
@@ -36,17 +36,17 @@ function Login({ setIsAuthenticated }) {
               placeholder="Email Address..."
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full pt-[0.2vh] pb-[0.5vh] mb-3 text-[#BBC1CF]/58 border-b-[1px] border-[#BBC1CF]/50 focus:outline-none focus:text-[#95A8C9]"
+              className="w-full pt-[0.2vh] pb-[0.5vh] mb-3 text-[#BBC1CF] border-b-[1px] border-[#BBC1CF]/50 placeholder-[#BBC1CF]/58 focus:outline-none focus:text-[#BBC1CF]"
             />
           </div>
           <div>
-            <p className="font-medium bg-gradient-to-b from-[#BBC1CF] to-[#95A8C9] text-transparent bg-clip-text">password</p>
+            <p className="font-medium bg-gradient-to-b from-[#BBC1CF] to-[#95A8C9] text-transparent bg-clip-text">Password</p>
             <input
               type="password"
               placeholder="*********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pt-[0.2vh] pb-[0.5vh] mb-3 text-[#BBC1CF]/58 border-b-[1px] border-[#BBC1CF]/50 focus:outline-none focus:text-[#95A8C9]"
+              className="w-full pt-[0.2vh] pb-[0.5vh] mb-3 text-[#BBC1CF] border-b-[1px] border-[#BBC1CF]/50 placeholder-[#BBC1CF]/58 focus:outline-none focus:text-[#BBC1CF]"
             />
           </div>
           <button
@@ -71,8 +71,13 @@ function Login({ setIsAuthenticated }) {
         </div>
         
         <div className="flex gap-[4.9vw]">
-          <p className="text-sm text-white mt-6">Don’t have an account?</p>
-          <p className="text-sm font-bold text-white mt-6">Sign Up Now</p>
+          <p className="text-sm text-white mt-6">Don't have an account?</p>
+          <p
+            className="text-sm font-bold text-white mt-6 cursor-pointer"
+            onClick={handleSignUpClick}
+          >
+            Sign Up Now
+          </p>
         </div>
       </div>
     </div>

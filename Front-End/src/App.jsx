@@ -24,7 +24,7 @@ function App() {
               path="/login" 
               element={<Login setIsAuthenticated={setIsAuthenticated} />} 
             />
-            <Route path="/signup" element={<Signup />} />
+            <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
           </Routes>
         </Transition>
       </div>

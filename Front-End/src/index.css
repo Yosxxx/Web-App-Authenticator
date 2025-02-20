@@ -38,10 +38,6 @@
   -webkit-text-fill-color: transparent;
 }
 
-* {
-  font-family: 'Roboto', sans-serif;
-}
-
 .transition-wrapper {
   position: fixed;
   top: 0;

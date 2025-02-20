@@ -1,21 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BackgroundDot from "../components/BackgroundDot";
 import SignupPicture from "../assets/SignupPicture.png";
 import { Icon } from "@iconify/react";
 
 function Signup() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    if (username === "admin" && password === "password") {
-      setIsAuthenticated(true);
-      navigate("/");
-    } else {
-      alert("Invalid credentials");
-    }
+  const handleSignUp = () => {
+    navigate("/login");
+  };
+
+  const handleSignInClick = () => {
+    navigate("/login");
   };
 
   return (
@@ -79,12 +75,15 @@ function Signup() {
             </div>
             <div className="flex gap-[3vw]">
               <button
-                onClick={handleLogin}
-                className="w-[10vw] h-[5vh] bg-[#6366F1] hover:bg-[#5254C7] border-1 border-[#BBC1CF] text-white font-bold rounded-xl transition"
+                onClick={handleSignUp}
+                className="w-[10vw] h-[5vh] bg-[#6366F1] hover:bg-[#5254C7] border-1 border-[#BBC1CF] text-white font-bold rounded-xl transition cursor-pointer"
               >
                 Sign Up
               </button>
-              <div className="flex justify-center items-center gap-[0.5vw]">
+              <div 
+                className="flex justify-center items-center gap-[0.5vw] cursor-pointer"
+                onClick={handleSignInClick}
+              >
                 <p className="text-white font-bold py-2 rounded-xl transition">Sign In</p>
                 <Icon icon="tabler:arrow-right" className="w-[3.5vh] h-[3.5vh] text-white mt-[0.3vh]" />
               </div>

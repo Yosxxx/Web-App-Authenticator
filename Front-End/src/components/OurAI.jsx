@@ -31,7 +31,7 @@ function OurAI() {
           className="lg:mr-20"
         ></Lottie>
       </div>
-      <div className="flex flex-col-reverse lg:flex-row gap-x-50 items-center">
+      <div className="flex flex-col-reverse lg:flex-row items-center">
         <Content
           title={FaceNetTitle}
           description={FaceNetDescription}

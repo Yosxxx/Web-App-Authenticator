@@ -76,7 +76,7 @@ import {
 } from "react-icons/md";
 
 // AnimatedIcon Component: randomly highlights (turns red) for 500ms at random intervals
-function AnimatedIcon({ IconComponent, size = 40 }) {
+function AnimatedIcon({ IconComponent, size = 20 }) {
   const [lit, setLit] = useState(false);
 
   useEffect(() => {
@@ -108,7 +108,7 @@ function AnimatedIcon({ IconComponent, size = 40 }) {
 
 function BuiltWith() {
   return (
-    <div className="w-[80vw] container mx-auto my-15 flex flex-col gap-y-40">
+    <div className="w-[80vw] container mx-auto my-15 flex flex-col gap-y-20">
       {/* React Section */}
       <div className="flex flex-col-reverse lg:flex-row gap-x-50 items-center">
         <Content
@@ -120,12 +120,11 @@ function BuiltWith() {
         <Lottie
           animationData={ReactLogo}
           style={{ width: "100%", height: "100%" }}
-          className="lg:mr-40"
         ></Lottie>
       </div>
 
       {/* React Icons Section */}
-      <div className="flex flex-col-reverse lg:flex-row gap-x-50">
+      <div className="flex flex-col-reverse lg:flex-row gap-x-50 lg:gap-x-10 xl:gap-x-50">
         <Content
           title={ReactIconsTitle}
           description={ReactIconsDescription}
@@ -134,54 +133,54 @@ function BuiltWith() {
         />
         <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-4 p-4 w-full place-items-center text-zinc-600">
           {/* react-icons/di */}
-          <AnimatedIcon IconComponent={DiReact} size={40} />
-          <AnimatedIcon IconComponent={DiJavascript1} size={40} />
-          <AnimatedIcon IconComponent={DiNodejsSmall} size={40} />
-          <AnimatedIcon IconComponent={DiCss3} size={40} />
+          <AnimatedIcon IconComponent={DiReact} size={20} />
+          <AnimatedIcon IconComponent={DiJavascript1} size={20} />
+          <AnimatedIcon IconComponent={DiNodejsSmall} size={20} />
+          <AnimatedIcon IconComponent={DiCss3} size={20} />
 
           {/* react-icons/fa */}
-          <AnimatedIcon IconComponent={FaRobot} size={40} />
-          <AnimatedIcon IconComponent={FaCoffee} size={40} />
-          <AnimatedIcon IconComponent={FaAppleAlt} size={40} />
-          <AnimatedIcon IconComponent={FaStar} size={40} />
-          <AnimatedIcon IconComponent={FaRocket} size={40} />
-          <AnimatedIcon IconComponent={FaBeer} size={40} />
-          <AnimatedIcon IconComponent={FaHeart} size={40} />
-          <AnimatedIcon IconComponent={FaCloud} size={40} />
-          <AnimatedIcon IconComponent={FaMusic} size={40} />
-          <AnimatedIcon IconComponent={FaSmile} size={40} />
+          <AnimatedIcon IconComponent={FaRobot} size={20} />
+          <AnimatedIcon IconComponent={FaCoffee} size={20} />
+          <AnimatedIcon IconComponent={FaAppleAlt} size={20} />
+          <AnimatedIcon IconComponent={FaStar} size={20} />
+          <AnimatedIcon IconComponent={FaRocket} size={20} />
+          <AnimatedIcon IconComponent={FaBeer} size={20} />
+          <AnimatedIcon IconComponent={FaHeart} size={20} />
+          <AnimatedIcon IconComponent={FaCloud} size={20} />
+          <AnimatedIcon IconComponent={FaMusic} size={20} />
+          <AnimatedIcon IconComponent={FaSmile} size={20} />
 
           {/* react-icons/ai */}
-          <AnimatedIcon IconComponent={AiFillGithub} size={40} />
-          <AnimatedIcon IconComponent={AiFillTwitterCircle} size={40} />
-          <AnimatedIcon IconComponent={AiFillAndroid} size={40} />
-          <AnimatedIcon IconComponent={AiFillApple} size={40} />
-          <AnimatedIcon IconComponent={AiFillLinkedin} size={40} />
-          <AnimatedIcon IconComponent={AiFillFacebook} size={40} />
+          <AnimatedIcon IconComponent={AiFillGithub} size={20} />
+          <AnimatedIcon IconComponent={AiFillTwitterCircle} size={20} />
+          <AnimatedIcon IconComponent={AiFillAndroid} size={20} />
+          <AnimatedIcon IconComponent={AiFillApple} size={20} />
+          <AnimatedIcon IconComponent={AiFillLinkedin} size={20} />
+          <AnimatedIcon IconComponent={AiFillFacebook} size={20} />
 
           {/* react-icons/bs */}
-          <AnimatedIcon IconComponent={BsFillAlarmFill} size={40} />
-          <AnimatedIcon IconComponent={BsFillCalendarFill} size={40} />
-          <AnimatedIcon IconComponent={BsFillCameraFill} size={40} />
-          <AnimatedIcon IconComponent={BsFillChatFill} size={40} />
-          <AnimatedIcon IconComponent={BsFillEmojiSmileFill} size={40} />
-          <AnimatedIcon IconComponent={BsFillLightningFill} size={40} />
+          <AnimatedIcon IconComponent={BsFillAlarmFill} size={20} />
+          <AnimatedIcon IconComponent={BsFillCalendarFill} size={20} />
+          <AnimatedIcon IconComponent={BsFillCameraFill} size={20} />
+          <AnimatedIcon IconComponent={BsFillChatFill} size={20} />
+          <AnimatedIcon IconComponent={BsFillEmojiSmileFill} size={20} />
+          <AnimatedIcon IconComponent={BsFillLightningFill} size={20} />
 
           {/* react-icons/md */}
-          <AnimatedIcon IconComponent={MdFavorite} size={40} />
-          <AnimatedIcon IconComponent={MdHome} size={40} />
-          <AnimatedIcon IconComponent={MdSettings} size={40} />
-          <AnimatedIcon IconComponent={MdEmail} size={40} />
-          <AnimatedIcon IconComponent={MdPhone} size={40} />
-          <AnimatedIcon IconComponent={MdInfo} size={40} />
-          <AnimatedIcon IconComponent={MdBuild} size={40} />
-          <AnimatedIcon IconComponent={MdCloudQueue} size={40} />
-          <AnimatedIcon IconComponent={MdLock} size={40} />
-          <AnimatedIcon IconComponent={MdVisibility} size={40} />
-          <AnimatedIcon IconComponent={MdOutlineAccessibility} size={40} />
-          <AnimatedIcon IconComponent={MdWifi} size={40} />
-          <AnimatedIcon IconComponent={MdSecurity} size={40} />
-          <AnimatedIcon IconComponent={MdFingerprint} size={40} />
+          <AnimatedIcon IconComponent={MdFavorite} size={20} />
+          <AnimatedIcon IconComponent={MdHome} size={20} />
+          <AnimatedIcon IconComponent={MdSettings} size={20} />
+          <AnimatedIcon IconComponent={MdEmail} size={20} />
+          <AnimatedIcon IconComponent={MdPhone} size={20} />
+          <AnimatedIcon IconComponent={MdInfo} size={20} />
+          <AnimatedIcon IconComponent={MdBuild} size={20} />
+          <AnimatedIcon IconComponent={MdCloudQueue} size={20} />
+          <AnimatedIcon IconComponent={MdLock} size={20} />
+          <AnimatedIcon IconComponent={MdVisibility} size={20} />
+          <AnimatedIcon IconComponent={MdOutlineAccessibility} size={20} />
+          <AnimatedIcon IconComponent={MdWifi} size={20} />
+          <AnimatedIcon IconComponent={MdSecurity} size={20} />
+          <AnimatedIcon IconComponent={MdFingerprint} size={20} />
         </div>
       </div>
 

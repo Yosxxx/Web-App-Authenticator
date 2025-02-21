@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import BackgroundDot from "../components/BackgroundDot";
 
 function Login({ setIsAuthenticated }) {
   const navigate = useNavigate();
@@ -15,7 +16,8 @@ function Login({ setIsAuthenticated }) {
   };
 
   return (
-    <div className="relative w-screen h-screen flex items-center justify-center">
+    <div className="fixed flex w-screen h-screen items-center justify-center">
+      <BackgroundDot />
 
       <div className="w-[28vw] h-[78vh] absolute z-20 bg-[#2E313C]/80 p-[2vw] pr-[4vw] pl-[4vw] rounded-[50px] flex flex-col justify-center items-center gap-[2vh]">
         <div className="flex flex-col justify-center items-center">

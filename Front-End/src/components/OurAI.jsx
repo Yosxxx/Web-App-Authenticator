@@ -17,7 +17,7 @@ const FaceNetTitleColor = "#bcaba2";
 
 function OurAI() {
   return (
-    <div className="container mx-auto my-15 flex flex-col gap-y-40">
+    <div className="w-[80vw] container mx-auto my-15 flex flex-col gap-y-40">
       <div className="flex flex-col-reverse lg:flex-row gap-x-50 items-center">
         <Content
           title={MTCNNTitle}

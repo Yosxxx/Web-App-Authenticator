@@ -14,7 +14,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route 
-          path="/" 
+          path="*" 
           element={isAuthenticated ? <LandingPage /> : <Navigate to="/login" />} 
         />
         <Route 

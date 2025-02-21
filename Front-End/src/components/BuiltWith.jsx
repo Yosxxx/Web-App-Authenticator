@@ -108,7 +108,7 @@ function AnimatedIcon({ IconComponent, size = 40 }) {
 
 function BuiltWith() {
   return (
-    <div className="w-[] container mx-auto my-15 flex flex-col gap-y-40">
+    <div className="w-[80vw] container mx-auto my-15 flex flex-col gap-y-40">
       {/* React Section */}
       <div className="flex flex-col-reverse lg:flex-row gap-x-50 items-center">
         <Content

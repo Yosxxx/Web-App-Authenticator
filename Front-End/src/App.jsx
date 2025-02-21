@@ -12,22 +12,17 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="relative w-screen h-screen">
-        <BackgroundDot />
-        <Transition>
-          <Routes>
-            <Route 
-              path="/" 
-              element={isAuthenticated ? <LandingPage /> : <Navigate to="/login" />} 
-            />
-            <Route 
-              path="/login" 
-              element={<Login setIsAuthenticated={setIsAuthenticated} />} 
-            />
-            <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
-          </Routes>
-        </Transition>
-      </div>
+      <Routes>
+        <Route 
+          path="*" 
+          element={isAuthenticated ? <LandingPage /> : <Navigate to="/login" />} 
+        />
+        <Route 
+          path="/login" 
+          element={<Login setIsAuthenticated={setIsAuthenticated} />} 
+        />
+        <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
+      </Routes>
     </BrowserRouter>
   );
 }

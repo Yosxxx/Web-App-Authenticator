@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SignupPicture from "../assets/SignupPicture.png";
 import { Icon } from "@iconify/react";
+import BackgroundDot from "../components/BackgroundDot";
 
 function Signup() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ function Signup() {
 
   return (
     <div className="relative w-screen h-screen flex items-center justify-center">
+      <BackgroundDot />
       <div className="flex absolute z-20 justify-center items-center">
         <div className="relative w-[32vw] h-[78vh]">
           <img

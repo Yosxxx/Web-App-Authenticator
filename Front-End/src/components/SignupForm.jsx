@@ -1,80 +1,217 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SignupPicture from "../assets/SignupPicture.png";
 import { Icon } from "@iconify/react";
+import supabase from "../config/supabaseClient";
 
 function SignupForm() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [formData, setFormData] = useState({
+    id: "",
+    username: "",
+    password: "",
+    faceEmbed: "",
+  });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
 
-    const handleSignUp = () => {
-        navigate("/login");
-    };
+  // Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-    const handleSignInClick = () => {
-        navigate("/login");
-    };
+  // Open Camera for Face Scan
+  const handleOpenCamera = async () => {
+    setIsCameraOpen(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      setError("Failed to access camera.");
+    }
+  };
 
-    return (
-        <div className="flex flex-wrap lg:flex-nowrap justify-center items-center w-full max-w-6xl z-20 px-4 md:px-8">
-            {/* Image section - hidden on mobile */}
-            <div className="hidden lg:block relative w-full lg:w-[40%] h-[50vh] lg:h-[78vh]">
+  // Capture Face from Camera
+  const handleCaptureFace = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (video && canvas) {
+      const context = canvas.getContext("2d");
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Simulating face embedding as base64 image for now
+      const faceEmbed = canvas.toDataURL("image/png");
+      setFormData({ ...formData, faceEmbed });
+      setIsCameraOpen(false);
+
+      // Stop the camera stream
+      video.srcObject.getTracks().forEach((track) => track.stop());
+    }
+  };
+
+  // Stop Camera Stream
+  const handleCloseCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const tracks = videoRef.current.srcObject.getTracks();
+      tracks.forEach((track) => track.stop()); // Stop each track
+    }
+    setIsCameraOpen(false);
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { id, username, password, faceEmbed } = formData;
+
+    if (!id || !username || !password) {
+      setError("ID, Username, and Password are required.");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("users")
+      .insert([{ id, username, password, face_embed: faceEmbed || null }]);
+
+    if (error) {
+      setError(error.message);
+    } else {
+      setSuccess("Signup successful! You can now log in.");
+      setFormData({ id: "", username: "", password: "", faceEmbed: "" });
+    }
+  };
+
+  const handleSignInClick = () => {
+    navigate("/login");
+  };
+
+  return (
+    <div className="flex flex-wrap lg:flex-nowrap justify-center items-center w-full max-w-6xl z-20 px-4 md:px-8">
+      {/* Image section */}
+      <div className="hidden lg:block relative w-full lg:w-[40%] h-[50vh] lg:h-[78vh]">
+        <img
+          src={SignupPicture}
+          className="w-full h-full object-cover rounded-t-lg lg:rounded-l-[30px] lg:rounded-tr-none"
+          alt="Signup Illustration"
+        />
+      </div>
+
+      {/* Form section */}
+      <div className="w-[75vw] md:w-[60vw] lg:w-[30vw] h-[85vh] bg-[#2E313C]/80 p-8 rounded-[30px] flex flex-col gap-6 justify-center">
+        <h1 className="text-4xl font-bold bg-gradient-to-b from-[#BBC1CF] to-[#95A8C9] text-transparent bg-clip-text text-center">
+          Sign Up
+        </h1>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          {["id", "username", "password"].map((field) => (
+            <div key={field}>
+              <label className="font-medium text-[#BBC1CF]">
+                {field.charAt(0).toUpperCase() + field.slice(1)}
+              </label>
+              <input
+                type={field === "password" ? "password" : "text"}
+                name={field}
+                value={formData[field]}
+                onChange={handleChange}
+                placeholder={`${field}...`}
+                required
+                className="w-full pt-1 pb-2 text-[#BBC1CF] border-b border-[#BBC1CF]/50 placeholder-[#BBC1CF]/58 focus:outline-none bg-transparent"
+              />
+            </div>
+          ))}
+
+          {/* Face Embedding Section */}
+          <div>
+            <label className="font-medium text-[#BBC1CF]">
+              Face Embedding (Optional)
+            </label>
+            {formData.faceEmbed ? (
+              <div className="flex items-center gap-4">
                 <img
-                    src={SignupPicture}
-                    className="w-full h-full object-cover rounded-t-lg lg:rounded-l-[30px] lg:rounded-tr-none"
-                    alt="Signup Illustration"
+                  src={formData.faceEmbed}
+                  alt="Face Preview"
+                  className="w-16 h-16 rounded-lg border border-gray-300"
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#BBC1CF]/30 via-[#95A8C9]/30 to-[#95A8C9]/70 rounded-t-lg lg:rounded-l-[30px] lg:rounded-tr-none">
-                    <p className="absolute top-[2%] right-[5%] text-3xl lg:text-4xl font-extrabold tracking-widest">F 4</p>
-                    <p className="absolute top-[9%] right-[4.5%] text-3xl lg:text-4xl font-extrabold tracking-widest">C 3</p>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, faceEmbed: "" })}
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={handleOpenCamera}
+                className="w-full py-2 bg-[#6366F1] text-white rounded-xl"
+              >
+                Scan Face
+              </button>
+            )}
+          </div>
+
+          {/* Camera Modal */}
+          {isCameraOpen && (
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-xl w-[90%] md:w-[60%] lg:w-[40%]">
+                <h2 className="text-xl font-bold mb-4">Scan Your Face</h2>
+                <video ref={videoRef} autoPlay className="w-full rounded-lg" />
+                <canvas
+                  ref={canvasRef}
+                  width="640"
+                  height="480"
+                  className="hidden"
+                />
+                <div className="flex justify-between mt-4">
+                  <button
+                    type="button"
+                    onClick={handleCaptureFace}
+                    className="px-4 py-2 bg-green-500 text-white rounded-lg"
+                  >
+                    Capture Face
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCloseCamera}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                  >
+                    Cancel
+                  </button>
                 </div>
+              </div>
             </div>
+          )}
 
-            {/* Form section */}
-            <div className="w-[75vw] md:w-[60vw] lg:w-[30vw] h-[85vh] md:h-[85vh] lg:h-[78vh] bg-[#2E313C]/80 p-8 md:p-8 lg:p-10 rounded-[30px] md:rounded-tr-[30px] md:rounded-[30px] lg:rounded-br-[30px] lg:rounded-tr-[30px] lg:rounded-tl-none lg:rounded-bl-none flex flex-col gap-6 md:gap-8 lg:gap-2 justify-center">
-                <h1 className="text-4xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-b from-[#BBC1CF] to-[#95A8C9] text-transparent bg-clip-text leading-normal text-center lg:text-left">
-                    Sign Up
-                </h1>
+          {/* Error & Success Messages */}
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          {success && <p className="text-green-500 text-center">{success}</p>}
 
-                <div className="flex flex-col gap-6 md:gap-8">
-                    {/* Input Fields */}
-                    <div className="space-y-4">
-                        {["Full Name", "Email", "Username", "Password", "Repeat Password"].map((label, index) => (
-                            <div key={index}>
-                                <p className="font-medium bg-gradient-to-b from-[#BBC1CF] to-[#95A8C9] text-transparent bg-clip-text">
-                                    {label}
-                                </p>
-                                <input
-                                    type={label.includes("Password") ? "password" : "text"}
-                                    placeholder={`${label}...`}
-                                    className="w-full pt-1 pb-2 text-[#BBC1CF] border-b-[1px] border-[#BBC1CF]/50 placeholder-[#BBC1CF]/58 focus:outline-none focus:text-[#BBC1CF] bg-transparent"
-                                />
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Buttons */}
-                    <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-[5vw]">
-                        <button
-                            onClick={handleSignUp}
-                            className="w-full lg:w-[40%] h-12 bg-[#6366F1] hover:bg-[#5254C7] border-1 border-[#BBC1CF] text-white font-bold rounded-xl transition cursor-pointer"
-                        >
-                            Sign Up
-                        </button>
-                        <div
-                            className="flex justify-center items-center gap-2 cursor-pointer"
-                            onClick={handleSignInClick}
-                        >
-                            <p className="text-white font-bold py-2 rounded-xl transition">Sign In</p>
-                            <Icon
-                                icon="tabler:arrow-right"
-                                className="w-6 h-6 md:w-8 md:h-8 lg:w-6 lg:h-6 text-white"
-                            />
-                        </div>
-                    </div>
-                </div>
+          {/* Submit & Sign In */}
+          <div className="flex flex-col lg:flex-row items-center gap-4">
+            <button
+              type="submit"
+              className="w-full lg:w-[40%] h-12 bg-[#6366F1] hover:bg-[#5254C7] text-white font-bold rounded-xl"
+            >
+              Sign Up
+            </button>
+            <div
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={handleSignInClick}
+            >
+              <p className="text-white font-bold">Sign In</p>
+              <Icon icon="tabler:arrow-right" className="w-6 h-6 text-white" />
             </div>
-        </div>
-    );
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export default SignupForm;

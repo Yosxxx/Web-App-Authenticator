@@ -9,7 +9,7 @@ import Card from "../components/Card";
 function LandingPage() {
   return (
     <>
-      <div style={{ backgroundColor: "#191F25" }} className="min-h-screen">
+      <div className="min-h-screen">
         <ProfileComponent />
 
         <Navbar />

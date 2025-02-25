@@ -7,6 +7,10 @@
   src: url("../src/assets/fonts/Menlo-Regular.ttf");
 }
 
+body {
+  background-color: var(--color-bgPrimary);
+}
+
 @theme {
   /* Font Families */
   --font-primary: "Roboto Mono", "Menlo", Courier, monospace;

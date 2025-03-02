@@ -1,6 +1,6 @@
 // LoginForm.jsx
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import supabase from "../config/supabaseClient";
@@ -9,10 +9,13 @@ function LoginForm({ setIsAuthenticated }) {
   const navigate = useNavigate();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const streamRef = useRef(null);
+  const scanIntervalRef = useRef(null);
 
   const [formData, setFormData] = useState({ id: "", password: "" });
   const [error, setError] = useState("");
   const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [scanStatus, setScanStatus] = useState("");
 
   // Handle regular login (by ID and password)
   const handleLogin = async () => {
@@ -46,96 +49,150 @@ function LoginForm({ setIsAuthenticated }) {
     return Math.sqrt(sumSq);
   };
 
+  const cleanupCamera = () => {
+    if (scanIntervalRef.current) {
+      clearInterval(scanIntervalRef.current);
+      scanIntervalRef.current = null;
+    }
+    
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    
+    setIsCameraOpen(false);
+    setScanStatus("");
+  };
+
   // Face Login: Open camera, capture face, then compare embedding with stored ones
   const handleFaceLogin = async () => {
     setError(""); // clear previous error
     setIsCameraOpen(true);
+    setScanStatus("Initializing camera...");
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      streamRef.current = stream;
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+
+        videoRef.current.onloadedmetadata = () => {
+          setScanStatus("Looking for your face...");
+          startFaceScan();
+        };
       }
     } catch (err) {
       setError("Failed to access camera.");
-      return;
+      cleanupCamera();
     }
+  };
+
+  const startFaceScan = () => {
+    // Scan every 1.5 seconds to avoid overwhelming the API
+    scanIntervalRef.current = setInterval(async () => {
+      try {
+        await handleCaptureFace();
+      } catch (err) {
+        console.error("Error during face scan:", err);
+        // Don't stop scanning on error, just continue
+        setScanStatus("Error during scan. Retrying...");
+      }
+    }, 3000);
   };
 
   // Capture face image, get embedding from backend, and compare with DB records
   const handleCaptureFace = async () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
-    if (video && canvas) {
-      const context = canvas.getContext("2d");
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const faceImage = canvas.toDataURL("image/png");
-      const base64Image = faceImage.split(",")[1];
 
-      try {
-        // Get embedding from your Python API
-        const response = await fetch("http://127.0.0.1:5000/get-embedding", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: base64Image }),
-        });
-        const result = await response.json();
-        if (!result.embedding) {
-          setError("Face not detected. Please try again.");
-          stopCamera();
-          return;
-        }
-        const capturedEmbedding = result.embedding; // This is an array
+    if (!video || !canvas){
+      return;
+    } 
 
-        // Retrieve all users with stored face embeddings
-        const { data: users, error: supabaseError } = await supabase
-          .from("users")
-          .select("id, face_embed");
-        if (supabaseError || !users) {
-          setError("Error retrieving user data.");
-          stopCamera();
-          return;
-        }
+    setScanStatus("Capturing face...");
 
-        // Iterate through users and compare embeddings
-        const threshold = 0.9; // adjust based on testing
-        let matchedUser = null;
-        for (const user of users) {
-          if (user.face_embed) {
-            // user.face_embed should be stored as an array in Supabase
-            const distance = euclideanDistance(
-              capturedEmbedding,
-              user.face_embed
-            );
-            if (distance < threshold) {
-              matchedUser = user;
-              break;
-            }
-          }
-        }
+    const context = canvas.getContext("2d");
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const faceImage = canvas.toDataURL("image/png");
+    const base64Image = faceImage.split(",")[1];
 
-        if (matchedUser) {
-          // If a matching user is found, log them in (you might also set session/token)
-          setIsAuthenticated(true);
-          navigate("/built-with");
+    try {
+      // Get embedding from your Python API
+      setScanStatus("Processing face...");
+      const response = await fetch("http://127.0.0.1:5000/get-embedding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: base64Image }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (errorData.error === "No face detected") {
+          setScanStatus("No face detected. Please position your face in the frame.");
+          return; // Continue scanning
         } else {
-          setError("No matching face found. Please try again.");
+          throw new Error(errorData.error || "API request failed");
         }
-      } catch (error) {
-        console.error(error);
-        setError("Error processing face. Please try again.");
       }
 
-      stopCamera();
+      const result = await response.json();
+      if (!result.embedding) {
+        setScanStatus("No face detected. Please position your face in the frame.");
+        return;
+      }
+      const capturedEmbedding = result.embedding; // This is an array
+      setScanStatus("Matching face...");
+      // Retrieve all users with stored face embeddings
+      const { data: users, error: supabaseError } = await supabase
+        .from("users")
+        .select("id, face_embed");
+      if (supabaseError || !users) {
+        setError("Error retrieving user data.");
+        cleanupCamera();
+        return;
+      }
+
+      // Iterate through users and compare embeddings
+      const threshold = 0.9; // adjust based on testing
+      let matchedUser = null;
+      for (const user of users) {
+        if (user.face_embed) {
+          // user.face_embed should be stored as an array in Supabase
+          const distance = euclideanDistance(
+            capturedEmbedding,
+            user.face_embed
+          );
+          if (distance < threshold) {
+            matchedUser = user;
+            break;
+          }
+        }
+      }
+
+      if (matchedUser) {
+        // If a matching user is found, log them in (you might also set session/token)
+        setScanStatus("Face recognized! Logging in...");
+        // Brief delay to show the success message
+        setTimeout(() => {
+          cleanupCamera();
+          setIsAuthenticated(true);
+          navigate("/built-with");
+        }, 800);
+      } else {
+        setScanStatus("Face not recognized. Still scanning...");
+      }
+    } catch (error) {
+      console.error(error);
+      setScanStatus("Error processing face. Retrying...");
     }
   };
 
-  // Stop camera stream
-  const stopCamera = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
-    }
-    setIsCameraOpen(false);
-  };
+  useEffect(() => {
+    return () => {
+      cleanupCamera();
+    };
+  }, []);
 
   const handleSignUpClick = () => navigate("/signup");
 
@@ -216,7 +273,8 @@ function LoginForm({ setIsAuthenticated }) {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl w-[90%] md:w-[60%] lg:w-[40%]">
             <h2 className="text-xl font-bold mb-4">Scan Your Face</h2>
-            <video ref={videoRef} autoPlay className="w-full rounded-lg" />
+            {scanStatus && <p className="text-gray-600 mb-4">{scanStatus}</p>}
+            <video ref={videoRef} autoPlay className="w-full h-full rounded-lg" />
             <canvas
               ref={canvasRef}
               width="640"
@@ -226,14 +284,7 @@ function LoginForm({ setIsAuthenticated }) {
             <div className="flex justify-between mt-4">
               <button
                 type="button"
-                onClick={handleCaptureFace}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg"
-              >
-                Capture Face
-              </button>
-              <button
-                type="button"
-                onClick={stopCamera}
+                onClick={cleanupCamera}
                 className="px-4 py-2 bg-red-500 text-white rounded-lg"
               >
                 Cancel

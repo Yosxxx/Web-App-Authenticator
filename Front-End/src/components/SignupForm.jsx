@@ -1,3 +1,5 @@
+// SignupForm.jsx
+
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SignupPicture from "../assets/SignupPicture.png";
@@ -37,34 +39,53 @@ function SignupForm() {
     }
   };
 
-  // Capture Face from Camera
-  const handleCaptureFace = () => {
+  // Capture Face from Camera and call backend to get embedding
+  const handleCaptureFace = async () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     if (video && canvas) {
       const context = canvas.getContext("2d");
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      // Simulating face embedding as base64 image for now
-      const faceEmbed = canvas.toDataURL("image/png");
-      setFormData({ ...formData, faceEmbed });
-      setIsCameraOpen(false);
+      // Convert canvas image to a base64 string (remove header)
+      const faceImage = canvas.toDataURL("image/png");
+      const base64Image = faceImage.split(",")[1];
 
-      // Stop the camera stream
+      try {
+        const response = await fetch("http://127.0.0.1:5000/get-embedding", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: base64Image }),
+        });
+
+        const data = await response.json();
+        if (data.embedding) {
+          // Save the embedding (an array) in formData
+          setFormData({ ...formData, faceEmbed: data.embedding });
+        } else {
+          setError("Face not detected. Please try again.");
+        }
+      } catch (error) {
+        console.error(error);
+        setError("Error processing face. Please try again.");
+      }
+
+      // Stop the camera stream and close the camera modal
       video.srcObject.getTracks().forEach((track) => track.stop());
+      setIsCameraOpen(false);
     }
   };
 
-  // Stop Camera Stream
+  // Stop Camera Stream Manually
   const handleCloseCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       const tracks = videoRef.current.srcObject.getTracks();
-      tracks.forEach((track) => track.stop()); // Stop each track
+      tracks.forEach((track) => track.stop());
     }
     setIsCameraOpen(false);
   };
 
-  // Handle form submission
+  // Handle form submission: store user data and face embedding in Supabase
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { id, username, password, faceEmbed } = formData;
@@ -74,12 +95,12 @@ function SignupForm() {
       return;
     }
 
-    const { error } = await supabase
+    const { error: supabaseError } = await supabase
       .from("users")
       .insert([{ id, username, password, face_embed: faceEmbed || null }]);
 
-    if (error) {
-      setError(error.message);
+    if (supabaseError) {
+      setError(supabaseError.message);
     } else {
       setSuccess("Signup successful! You can now log in.");
       setFormData({ id: "", username: "", password: "", faceEmbed: "" });
@@ -92,7 +113,7 @@ function SignupForm() {
 
   return (
     <div className="flex flex-wrap lg:flex-nowrap justify-center items-center w-full max-w-6xl z-20 px-4 md:px-8">
-      {/* Image section */}
+      {/* Image Section */}
       <div className="hidden lg:block relative w-full lg:w-[40%] h-[50vh] lg:h-[78vh]">
         <img
           src={SignupPicture}
@@ -101,7 +122,7 @@ function SignupForm() {
         />
       </div>
 
-      {/* Form section */}
+      {/* Form Section */}
       <div className="w-[75vw] md:w-[60vw] lg:w-[30vw] h-[85vh] bg-[#2E313C]/80 p-8 rounded-[30px] flex flex-col gap-6 justify-center">
         <h1 className="text-4xl font-bold bg-gradient-to-b from-[#BBC1CF] to-[#95A8C9] text-transparent bg-clip-text text-center">
           Sign Up
@@ -133,7 +154,7 @@ function SignupForm() {
             {formData.faceEmbed ? (
               <div className="flex items-center gap-4">
                 <img
-                  src={formData.faceEmbed}
+                  src={`data:image/png;base64,${formData.faceEmbed}`}
                   alt="Face Preview"
                   className="w-16 h-16 rounded-lg border border-gray-300"
                 />

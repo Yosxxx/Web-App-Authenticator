@@ -89,7 +89,7 @@ function LoginForm({ setIsAuthenticated }) {
   };
 
   const startFaceScan = () => {
-    // Scan every 1.5 seconds to avoid overwhelming the API
+    // Scan every 3 seconds to avoid overwhelming the API
     scanIntervalRef.current = setInterval(async () => {
       try {
         await handleCaptureFace();

@@ -35,7 +35,7 @@ function LoginForm({ setIsAuthenticated }) {
       setError("Invalid ID or password.");
     } else {
       setIsAuthenticated(true);
-      localStorage.setItem("username", data.username);
+      localStorage.setItem("id", data.id);
       navigate("/built-with");
     }
   };
@@ -178,7 +178,7 @@ function LoginForm({ setIsAuthenticated }) {
         setTimeout(() => {
           cleanupCamera();
           setIsAuthenticated(true);
-          localStorage.setItem("username", matchedUser.username);
+          localStorage.setItem("id", matchedUser.id);
           navigate("/built-with");
         }, 800);
       } else {

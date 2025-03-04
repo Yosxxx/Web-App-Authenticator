@@ -35,6 +35,7 @@ function LoginForm({ setIsAuthenticated }) {
       setError("Invalid ID or password.");
     } else {
       setIsAuthenticated(true);
+      localStorage.setItem("username", data.username);
       navigate("/built-with");
     }
   };
@@ -146,7 +147,7 @@ function LoginForm({ setIsAuthenticated }) {
       // Retrieve all users with stored face embeddings
       const { data: users, error: supabaseError } = await supabase
         .from("users")
-        .select("id, face_embed");
+        .select("id, face_embed, username");
       if (supabaseError || !users) {
         setError("Error retrieving user data.");
         cleanupCamera();
@@ -154,7 +155,7 @@ function LoginForm({ setIsAuthenticated }) {
       }
 
       // Iterate through users and compare embeddings
-      const threshold = 0.9; // adjust based on testing
+      const threshold = 0.9; // adjust based on testing 
       let matchedUser = null;
       for (const user of users) {
         if (user.face_embed) {
@@ -177,6 +178,7 @@ function LoginForm({ setIsAuthenticated }) {
         setTimeout(() => {
           cleanupCamera();
           setIsAuthenticated(true);
+          localStorage.setItem("username", matchedUser.username);
           navigate("/built-with");
         }, 800);
       } else {
